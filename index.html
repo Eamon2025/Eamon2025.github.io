@@ -16,26 +16,30 @@
         body {
             margin: 0;
             padding: 0;
-            width: 100vw;  /* 使用视口宽度 */
-            height: 100vh; /* 使用视口高度 */
-            overflow: hidden; /* 防止滚动条干扰滑动 */
-            position: relative; /* 为绝对定位元素提供参考 */
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            background-color: #000; /* 添加黑色背景 */
         }
 
         /* 视频样式（初始隐藏） */
         #ad-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 50%;  /* 使用百分比宽度 */
-            height: 50%; /* 使用百分比高度 */
-            object-fit: cover; /* 视频填充整个屏幕 */
-            display: none; /* 初始隐藏 */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;  /* 视频宽度为视口宽度的80% */
+            height: auto; /* 高度自动按比例调整 */
+            max-height: 80vh; /* 最大高度不超过视口高度的80% */
+            object-fit: contain; /* 保持视频比例 */
+            display: none;
+            z-index: 5;
         }
 
         /* 提示文字 */
         .tip {
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
@@ -44,8 +48,8 @@
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
             z-index: 10;
             text-align: center;
-            width: 80%; /* 限制提示文字宽度 */
-            max-width: 300px; /* 最大宽度 */
+            width: 80%;
+            max-width: 300px;
         }
     </style>
 </head>
@@ -68,43 +72,37 @@
 
         // 通用滑动处理函数（兼容鼠标和触摸）
         function handleStart(e) {
-            // 兼容鼠标事件（clientY）和触摸事件（touches[0].clientY）
             startY = e.clientY || e.touches[0].clientY;
         }
 
         function handleEnd(e) {
-            // 兼容鼠标事件（clientY）和触摸事件（changedTouches[0].clientY）
             const endY = e.clientY || e.changedTouches[0].clientY;
-            const deltaY = startY - endY; // 向上滑动为正数
+            const deltaY = startY - endY;
 
-            // 如果向上滑动超过阈值，触发视频播放
             if (deltaY > SWIPE_THRESHOLD) {
                 startVideo();
             }
         }
 
-        // 绑定鼠标事件（电脑端）
+        // 绑定事件
         document.addEventListener('mousedown', handleStart);
         document.addEventListener('mouseup', handleEnd);
-
-        // 绑定触摸事件（手机端）
         document.addEventListener('touchstart', handleStart);
         document.addEventListener('touchend', handleEnd);
 
         // 开始播放视频
         function startVideo() {
-            tip.style.display = 'none'; // 隐藏提示文字
-            video.style.display = 'block'; // 显示视频
+            tip.style.display = 'none';
+            video.style.display = 'block';
             video.play().catch(error => {
                 console.error('视频播放失败:', error);
-                // 处理自动播放被阻止的情况（如需用户交互）
                 alert('请点击屏幕继续播放');
             });
         }
 
-        // 监听视频播放结束事件
+        // 监听视频结束事件
         video.addEventListener('ended', function() {
-            window.location.href = 'https://www.baidu.com'; // 跳转百度
+            window.location.href = 'https://www.baidu.com';
         });
     </script>
 </body>
