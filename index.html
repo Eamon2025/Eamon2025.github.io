@@ -5,48 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>滑动播放视频广告</title>
     <style>
-        /* 重置所有元素默认样式 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* 全屏背景（黑色） */
         body {
-            margin: 0;
-            padding: 0;
+            position: relative;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
-            position: relative;
-            background-color: #000; /* 黑色背景 */
+            background-color: #000;
         }
 
-        /* 视频样式（固定为屏幕宽度的60%） */
+        /* 视频容器 */
+        .video-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
         #ad-video {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60vw;  /* 视频宽度为屏幕宽度的60% */
-            height: auto; /* 高度自动按比例调整 */
-            max-height: 60vh; /* 最大高度不超过屏幕高度的60% */
-            object-fit: contain; /* 保持视频比例 */
-            display: none;
-            z-index: 5;
+            width: 80vw;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        /* 提示文字 */
-        .tip {
+        /* 视频首帧覆盖层 */
+        .video-first-frame {
             position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 2;
+        }
+
+        .tip {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: #fff;
             font-size: 18px;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-            z-index: 10;
+            z-index: 3;
             text-align: center;
             width: 80%;
             max-width: 300px;
@@ -54,8 +69,13 @@
     </style>
 </head>
 <body>
-    <!-- 视频元素 -->
-    <video id="ad-video" src="your_video.mp4" muted playsinline webkit-playsinline></video>
+    <!-- 视频容器 -->
+    <div class="video-container">
+        <video id="ad-video" src="your_video.mp4" muted playsinline webkit-playsinline>
+            <!-- 添加海报帧 -->
+            <img src="first-frame.jpg" alt="" class="video-first-frame">
+        </video>
+    </div>
 
     <!-- 提示文字 -->
     <p class="tip">向上滑动屏幕开始播放</p>
@@ -63,14 +83,18 @@
     <script>
         const video = document.getElementById('ad-video');
         const tip = document.querySelector('.tip');
+        const firstFrame = document.querySelector('.video-first-frame');
 
-        // 定义滑动阈值（像素）
-        const SWIPE_THRESHOLD = 50;
+        // 确保视频加载首帧
+        video.addEventListener('loadeddata', function() {
+            // 显示视频首帧
+            firstFrame.style.opacity = '1';
+            video.style.opacity = '1';
+        });
 
-        // 记录起始位置
+        // 滑动处理函数
         let startY = 0;
-
-        // 通用滑动处理函数（兼容鼠标和触摸）
+        
         function handleStart(e) {
             startY = e.clientY || e.touches[0].clientY;
         }
@@ -79,12 +103,12 @@
             const endY = e.clientY || e.changedTouches[0].clientY;
             const deltaY = startY - endY;
 
-            if (deltaY > SWIPE_THRESHOLD) {
+            if (deltaY > 50) {
                 startVideo();
             }
         }
 
-        // 绑定事件
+        // 事件绑定
         document.addEventListener('mousedown', handleStart);
         document.addEventListener('mouseup', handleEnd);
         document.addEventListener('touchstart', handleStart);
@@ -92,16 +116,16 @@
 
         // 开始播放视频
         function startVideo() {
-            tip.style.display = 'none';
-            video.style.display = 'block';
+            firstFrame.style.display = 'none';
+            video.style.opacity = '1';
             video.play().catch(error => {
                 console.error('视频播放失败:', error);
                 alert('请点击屏幕继续播放');
             });
         }
 
-        // 监听视频结束事件
-        video.addEventListener('ended', function() {
+        // 视频结束事件
+        video.addEventListener('ended', () => {
             window.location.href = 'https://www.baidu.com';
         });
     </script>
