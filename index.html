@@ -3,19 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>上滑播放视频广告</title>
-    <link rel="stylesheet" href="style.css">
+    <title>滑动播放视频广告</title>
+    <style>
+        /* 全屏背景（可选） */
+        body {
+            margin: 0;
+            overflow: hidden; /* 防止滚动条干扰滑动 */
+        }
+
+        /* 视频样式（初始隐藏） */
+        #ad-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 视频填充整个屏幕 */
+            display: none; /* 初始隐藏 */
+        }
+
+        /* 提示文字 */
+        .tip {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 18px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            z-index: 10;
+        }
+    </style>
 </head>
 <body>
-    <!-- 开屏背景图（可选） -->
-    <div class="splash-bg"></div>
-
-    <!-- 视频元素（初始隐藏） -->
+    <!-- 视频元素 -->
     <video id="ad-video" src="your_video.mp4" muted playsinline webkit-playsinline></video>
 
     <!-- 提示文字 -->
     <p class="tip">向上滑动屏幕开始播放</p>
 
-    <script src="script.js"></script>
+    <script>
+        const video = document.getElementById('ad-video');
+        const tip = document.querySelector('.tip');
+
+        // 定义滑动阈值（像素）
+        const SWIPE_THRESHOLD = 50;
+
+        // 记录起始位置
+        let startY = 0;
+
+        // 通用滑动处理函数（兼容鼠标和触摸）
+        function handleStart(e) {
+            // 兼容鼠标事件（clientY）和触摸事件（touches[0].clientY）
+            startY = e.clientY || e.touches[0].clientY;
+        }
+
+        function handleEnd(e) {
+            // 兼容鼠标事件（clientY）和触摸事件（changedTouches[0].clientY）
+            const endY = e.clientY || e.changedTouches[0].clientY;
+            const deltaY = startY - endY; // 向上滑动为正数
+
+            // 如果向上滑动超过阈值，触发视频播放
+            if (deltaY > SWIPE_THRESHOLD) {
+                startVideo();
+            }
+        }
+
+        // 绑定鼠标事件（电脑端）
+        document.addEventListener('mousedown', handleStart);
+        document.addEventListener('mouseup', handleEnd);
+
+        // 绑定触摸事件（手机端）
+        document.addEventListener('touchstart', handleStart);
+        document.addEventListener('touchend', handleEnd);
+
+        // 开始播放视频
+        function startVideo() {
+            tip.style.display = 'none'; // 隐藏提示文字
+            video.style.display = 'block'; // 显示视频
+            video.play().catch(error => {
+                console.error('视频播放失败:', error);
+                // 处理自动播放被阻止的情况（如需用户交互）
+                alert('请点击屏幕继续播放');
+            });
+        }
+
+        // 监听视频播放结束事件
+        video.addEventListener('ended', function() {
+            window.location.href = 'https://www.baidu.com'; // 跳转百度
+        });
+    </script>
 </body>
 </html>

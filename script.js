@@ -14,7 +14,7 @@ document.addEventListener('touchend', function(e) {
     const deltaY = startY - endY; // 计算滑动距离
 
     // 如果向上滑动超过50px，开始播放视频
-    if (deltaY > 50) {
+    if (deltaY > 30) {
         startVideo();
     }
 });
