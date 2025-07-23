@@ -12,7 +12,7 @@
             box-sizing: border-box;
         }
 
-        /* 全屏背景（可选） */
+        /* 全屏背景（黑色） */
         body {
             margin: 0;
             padding: 0;
@@ -20,18 +20,18 @@
             height: 100vh;
             overflow: hidden;
             position: relative;
-            background-color: #000; /* 添加黑色背景 */
+            background-color: #000; /* 黑色背景 */
         }
 
-        /* 视频样式（初始隐藏） */
+        /* 视频样式（固定为屏幕宽度的60%） */
         #ad-video {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80vw;  /* 视频宽度为视口宽度的80% */
+            width: 60vw;  /* 视频宽度为屏幕宽度的60% */
             height: auto; /* 高度自动按比例调整 */
-            max-height: 80vh; /* 最大高度不超过视口高度的80% */
+            max-height: 60vh; /* 最大高度不超过屏幕高度的60% */
             object-fit: contain; /* 保持视频比例 */
             display: none;
             z-index: 5;
