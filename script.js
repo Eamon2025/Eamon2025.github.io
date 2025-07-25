@@ -2,7 +2,7 @@
 const video = document.getElementById('ad-video');
 const tip = document.querySelector('.tip');
 
-// 监听滑动事件（向上滑动超过50px触发）
+// 监控滑动事件（向上滑动超过30px触发）
 let startY = 0;
 
 document.addEventListener('touchstart', function(e) {
@@ -13,7 +13,7 @@ document.addEventListener('touchend', function(e) {
     const endY = e.changedTouches[0].clientY; // 记录触摸结束位置
     const deltaY = startY - endY; // 计算滑动距离
 
-    // 如果向上滑动超过50px，开始播放视频
+    // 如果向上滑动超过30px，开始播放视频
     if (deltaY > 30) {
         startVideo();
     }
@@ -30,7 +30,7 @@ function startVideo() {
     });
 }
 
-// 监听视频播放结束事件
+// 监控视频播放结束事件
 video.addEventListener('ended', function() {
     window.location.href = 'https://www.baidu.com'; // 跳转百度
 });
